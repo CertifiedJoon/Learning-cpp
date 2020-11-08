@@ -15,4 +15,4 @@ int main()
 
     for (const auto &w : wordc)
         cout << w.first  << " : " << w.second << endl;
-}
+}   
