@@ -17,13 +17,15 @@ int main(int argc, char *argv[]) {
 
 void runQueries (std::ifstream &fin)
 {
-    TextQuery tq(fin);
+    TextQuery tq1(fin);
+    TextQuery tq2 = tq1;
+    TextQuery tq3(tq2);
     std::cout << "constrution successful" << std::endl;
     while(true)
     {
         std::cout << "Enter a word to search or enter q to quit: ";
         std::string s;
         if (!(std::cin >> s) || s == "q") break;
-        print(std::cout, tq.query(s)) << std::endl;
+        print(std::cout, tq3.query(s)) << std::endl;
     }
 }
