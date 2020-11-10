@@ -1,17 +1,25 @@
+class StrVec;
+void swap(StrVec &, StrVec &);
+
 class StrVec{
+    friend void swap(StrVec &, StrVec &);
 public:
     StrVec() : elements(nullptr), first_free(nullptr), cap(nullptr) {}
     StrVec(const StrVec &sv);
+    StrVec(StrVec &&sv) noexcept : elements(sv.elements), first_free(sv.first_free), cap(sv.cap)
+        {sv.elements = sv.first_free = sv.cap = nullptr;}
     StrVec(std::initializer_list<std::string>);
-    StrVec& operator=(const StrVec &sv);
+    StrVec& operator=(StrVec &rhs) noexcept;
+    StrVec& operator=(StrVec &&rhs) noexcept;
     ~StrVec() {free();}
 
-    size_t size() {return first_free - elements;}
-    size_t capacity() {return cap - elements;}
+    size_t size() const {return first_free - elements;}
+    size_t capacity() const {return cap - elements;}
     std::string* begin() const {return elements;}
     std::string* end() const {return first_free;}
 
     StrVec& push_back(const std::string &s);
+    StrVec& push_back(std::string &&s);
     StrVec& resize(size_t n);
     void reserve(size_t n);
 
@@ -28,6 +36,16 @@ private:
     std::string *cap;
 };
 
+std::allocator<std::string> StrVec::alloc;
+
+void swap(StrVec &lhs, StrVec &rhs)
+{
+    using std::swap;
+    swap(lhs.elements, rhs.elements);
+    swap(lhs.first_free, rhs.first_free);
+    swap(lhs.cap, rhs.cap);
+}
+
 StrVec::StrVec(const StrVec& sv)
 {
     auto newp = alloc_n_copy(sv.begin(), sv.end());
@@ -37,19 +55,20 @@ StrVec::StrVec(const StrVec& sv)
 
 StrVec::StrVec(std::initializer_list<std::string> lst)
 {
-    auto newp = alloc_n_copy(lst.begin(), lst.end());
+    auto newp = alloc_n_copy(std::begin(lst),std::end(lst));
     elements = newp.first;
     first_free = cap = newp.second;
 }
 
-StrVec& StrVec::operator=(const StrVec &sv)
+StrVec& StrVec::operator=(StrVec &rhs) noexcept
 {
-    auto newp = alloc_n_copy(sv.begin(), sv.end());
-    free();
+    swap(*this, rhs);
+    return *this;
+}
 
-    elements = newp.first;
-    first_free = cap = newp.second;
-
+StrVec& StrVec::operator=(StrVec &&rhs) noexcept
+{
+    swap(*this, rhs);
     return *this;
 }
 
@@ -75,10 +94,18 @@ StrVec& StrVec::push_back(const std::string &s)
     return *this;
 }
 
+StrVec& StrVec::push_back(std::string &&s)
+{
+    chk_n_alloc();
+    alloc.construct(first_free++, std::move(s));
+
+    return *this;
+}
+
 std::pair<std::string*, std::string*>
 StrVec::alloc_n_copy(const std::string* b, const std::string* e)
 {
-    auto data = alloc.allocate(b - e);
+    auto data = alloc.allocate(e - b);
     return {data, uninitialized_copy(b, e, data)};
 }
 
@@ -95,15 +122,13 @@ void StrVec::free()
 void StrVec::reallocate()
 {
     auto newcap = size() ? 2 * size() : 1;
-    auto newdata = alloc.allocate(newcap);
-    std::string* dest = newdata;
-    std::string* elem = elements;
-    
-    for (size_t i = 0; i < size(); ++i)
-        alloc.construct(dest++,std::move(*elem++));
-    free();
+    auto first = alloc.allocate(newcap);
+    auto last = uninitialized_copy(make_move_iterator(begin()),
+                                   make_move_iterator(end()),
+                                   first);
 
-    elements = newdata;
-    first_free = dest;
+    free();
+    elements = first;
+    first_free = last;
     cap = elements + newcap;
 }

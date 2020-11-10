@@ -11,8 +11,8 @@
 int main()
 {
     std::ostream_iterator<std::string> osit(std::cout, " ");
-    StrVec sv1{"string 1", "string 2", "string3"};
-    std::cout << "construction complete\n";
+
+    StrVec sv1{"string 1", "string 2", "string 3"};
     copy(sv1.begin(), sv1.end(), osit);
     std::cout << std::endl;
     
@@ -21,12 +21,12 @@ int main()
     copy(sv2.begin(), sv2.end(), osit);
     std::cout << std::endl;
 
-    StrVec sv3(sv1);
+    StrVec sv4 = sv2;
+    copy (sv4.begin(), sv4.end(), osit);
+    std::cout << std::endl;
+
+    StrVec sv3(sv2);
     copy(sv3.begin(), sv3.end(), osit);
     std::cout << std::endl;
 
-    StrVec sv4;
-    sv4 = sv1;
-    copy (sv4.begin(), sv4.end(), osit);
-    std::cout << std::endl;
 }
