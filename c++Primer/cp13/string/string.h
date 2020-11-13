@@ -40,9 +40,10 @@ void swap (string &s1, string &s2)
     swap(s1.cap, s2.cap);
 }
 
-void print(const string &s)
-{
-    std::for_each(s.begin(), s.end(), std::putchar);
+std::ostream &operator<<(std::ostream &os, string& s){
+    for(auto it = s.begin(); it != s.end(); ++it)
+        os << *it;
+    return os;
 }
 
 void string::reallocate()
@@ -51,15 +52,17 @@ void string::reallocate()
     auto first = alloc.allocate(newCap);
     
     auto last = std::uninitialized_copy(std::make_move_iterator(begin()),
-                                   std::make_move_iterator(end()),
-                                   first);
+                                        std::make_move_iterator(end()),
+                                        first);
+    free();
     elements = first;
     first_free = last;
     cap = first + newCap;
 }
 
 std::pair<char*, char*> 
-string::alloc_n_copy(const char *b, const char *e){
+string::alloc_n_copy(const char *b, const char *e)
+{
     auto newp = alloc.allocate(e - b);
     return {newp, std::uninitialized_copy(b,e,newp)};
 }
@@ -84,7 +87,10 @@ string::string()
 
 string::string(const char *arr)
 {
-    auto len =  sizeof(arr) / sizeof(arr[0]);
+    size_t len = 0;
+    for (auto it = arr; *it != '\0'; ++it)
+        ++len;
+    
     auto newc = alloc_n_copy(arr, arr+len);
     elements = newc.first;
     first_free = cap = newc.second;

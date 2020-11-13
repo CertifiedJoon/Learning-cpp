@@ -9,8 +9,12 @@ public:
     StrVec(StrVec &&sv) noexcept : elements(sv.elements), first_free(sv.first_free), cap(sv.cap)
         {sv.elements = sv.first_free = sv.cap = nullptr;}
     StrVec(std::initializer_list<std::string>);
+    
     StrVec& operator=(StrVec &rhs) noexcept;
     StrVec& operator=(StrVec &&rhs) noexcept;
+    StrVec& operator=(std::initializer_list<std::string>);
+
+    std::string& operator[](size_t n);
     ~StrVec() {free();}
 
     size_t size() const {return first_free - elements;}
@@ -70,6 +74,76 @@ StrVec& StrVec::operator=(StrVec &&rhs) noexcept
 {
     swap(*this, rhs);
     return *this;
+}
+
+StrVec& StrVec::operator=(std::initializer_list<std::string> lst)
+{
+    auto newp = alloc_n_copy(lst.begin(), lst.end());
+    free();
+    elements = newp.first;
+    first_free = cap = newp.second;
+
+    return *this;
+}
+
+bool operator==(const StrVec &lhs, const StrVec &rhs)
+{
+    auto lit = lhs.begin(), rit = rhs.begin();
+
+    while (lit != lhs.end() && rit != rhs.end() && *lit == *rit)
+         ++lit, ++rit;
+        
+    return (lit == lhs.end() && rit == rhs.end());
+}
+
+bool operator!=(const StrVec &lhs, const StrVec &rhs)
+{
+    return !(lhs == rhs);
+}
+
+bool operator<(const StrVec &lhs, const StrVec &rhs)
+{
+    auto lit = lhs.begin(), rit = rhs.begin();
+
+    while (lit != lhs.end() && rit != rhs.end() && *lit == *rit)
+         ++lit, ++rit;
+        
+    return (lit != lhs.end() && rit != rhs.end() && *lit < *rit);
+}
+
+bool operator<=(const StrVec &lhs, const StrVec &rhs)
+{
+    auto lit = lhs.begin(), rit = rhs.begin();
+
+    while (lit != lhs.end() && rit != rhs.end() && *lit == *rit)
+         ++lit, ++rit;
+        
+    return (lit == lhs.end() && rit == rhs.end() || *lit < *rit);
+}
+
+bool operator>(const StrVec &lhs, const StrVec &rhs)
+{
+    auto lit = lhs.begin(), rit = rhs.begin();
+
+    while (lit != lhs.end() && rit != rhs.end() && *lit == *rit)
+         ++lit, ++rit;
+        
+    return (lit != lhs.end() && rit != rhs.end() && *lit > *rit);
+}
+
+bool operator>=(const StrVec &lhs, const StrVec &rhs)
+{
+    auto lit = lhs.begin(), rit = rhs.begin();
+
+    while (lit != lhs.end() && rit != rhs.end() && *lit == *rit)
+         ++lit, ++rit;
+        
+    return (lit == lhs.end() && rit == rhs.end() || *lit > *rit);
+}
+
+std::string &StrVec::operator[](size_t n)
+{
+    return elements[n];
 }
 
 void StrVec::reserve(size_t n)

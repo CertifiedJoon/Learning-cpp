@@ -9,5 +9,6 @@
 int main()
 {
     string s("i dont think this is gonna work");
-    print(s);
+    string s1(s);
+    std::cout << s1;
 }
