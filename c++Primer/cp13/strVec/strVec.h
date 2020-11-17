@@ -10,8 +10,7 @@ public:
         {sv.elements = sv.first_free = sv.cap = nullptr;}
     StrVec(std::initializer_list<std::string>);
     
-    StrVec& operator=(StrVec &rhs) noexcept;
-    StrVec& operator=(StrVec &&rhs) noexcept;
+    StrVec& operator=(StrVec rhs) noexcept;
     StrVec& operator=(std::initializer_list<std::string>);
 
     std::string& operator[](size_t n);
@@ -31,7 +30,7 @@ private:
     static std::allocator<std::string> alloc;
     void chk_n_alloc()
         {if (size() == capacity()) reallocate();}
-    std::pair<std::string*, std::string*> alloc_n_copy
+    std::pair<std::string*, std::   string*> alloc_n_copy
         (const std::string*, const std::string*);
     void free();
     void reallocate();
@@ -42,7 +41,7 @@ private:
 
 std::allocator<std::string> StrVec::alloc;
 
-void swap(StrVec &lhs, StrVec &rhs)
+void swap(StrVec &lhs, StrVec &&rhs)
 {
     using std::swap;
     swap(lhs.elements, rhs.elements);
@@ -65,12 +64,6 @@ StrVec::StrVec(std::initializer_list<std::string> lst)
 }
 
 StrVec& StrVec::operator=(StrVec &rhs) noexcept
-{
-    swap(*this, rhs);
-    return *this;
-}
-
-StrVec& StrVec::operator=(StrVec &&rhs) noexcept
 {
     swap(*this, rhs);
     return *this;
