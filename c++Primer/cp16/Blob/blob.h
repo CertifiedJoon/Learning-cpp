@@ -12,7 +12,8 @@ public:
     Blob(): data(std::make_shared<std::vector<T>>()) {}
     Blob(std::initializer_list<T> il):
                 data(std::make_shared<std::vector<T>> (il)) {}
-    
+    template<typename IT>
+    Blob(IT b, IT e) : data(std::make_shared<std::vector<T>>(b,e)) {}
     T& operator[](size_type i);
 
     size_type size() const {return data->size();}
