@@ -1,0 +1,14 @@
+bool Dumb_Cryptarithmetic(puzzleT puzzle, string lettersToAssign)
+{
+	if(lettersToAssign == "")
+		return puzzleSolved(puzzle);
+	
+	for (int digit = 0; digit <= 9; digit++){
+		if (AssignLetter(lettersToAssign[0], digit)){
+			if (Dumb_Cryptarithmetic(puzzle, lettersToAssign.substr(1))) return true;
+			UnassignLetter(lettersToAssign[0], digit);
+		}
+	}
+	
+	return false
+}
