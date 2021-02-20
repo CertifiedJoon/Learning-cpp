@@ -12,3 +12,15 @@ bool Dumb_Cryptarithmetic(puzzleT puzzle, string lettersToAssign)
 	
 	return false
 }
+
+/*
+To make it smarter, 
+dont wasate time on ridiculous choices, 
+Assign S then assgine U now consider N --> will dramatically shorten the asymtotics
+
+  CS
++YOU
+----
+ FUN
+
+*/
