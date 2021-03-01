@@ -6,10 +6,10 @@ bool Solve(Grid<bool> &board, int col){
 	if (col > board.numcols()) return true;
 	
 	for (int rowToTry = 0; rowToTry < board.numRows(); rowToTry++) {
-		if (IsSafe(board, RowToTrym col)){
+		if (IsSafe(board, RowToTry, col)){
 			PlaceQueen(board, rowToTry, col);
 			if (Solve(board, col + 1)) return true;
-			RemoveQueen(boardm rowToTry,col);
+			RemoveQueen(board, rowToTry,col);
 		}
 	}
 	return false;
