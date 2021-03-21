@@ -128,8 +128,8 @@ vector<T>& vector<T>::operator=(std::initializer_list<T> il)
 {
     auto newp = alloc_n_copy(il.begin(), il.end());
     free();
-    elements = newp.first();
-    first_free = newp.second();
+    elements = newp.first;
+    first_free = newp.second;
     return *this;
 }
 
