@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <utility>
+#include <exception>
 
 template<typename> class vector;
 template <typename T> bool operator==(const vector<T>&, const vector<T>&);
@@ -30,6 +31,10 @@ public:
 	std::size_t capacity() const { return cap - elements; }
 	T* begin() const { return elements; }
 	T* end() cosnt { return first_free; }
+	
+	void reserve(std::size_t);
+	vector<T>& push_back(const T &lv);
+	vector<T>& push_back(T &&rv);
 	
 private:
 	static std::allocator<T> alloc;
@@ -95,5 +100,101 @@ vector<T>::vector(std::initializer_list<T> il)
 	first_free = cap = newp.second;
 }
 
+template<typename T>
+void swap(vector<T> &lhs, vector<T> &rhs)
+{
+	using std::swap();
+	swap(lhs.elements, rhs.elements);
+	swap(lhs.first_free, rhs.first_free);
+	swap(lhs.cap, rhs.cap);
+}
+
+template<typename T>
+vector<T>::operator=(vector<T> rhs)
+{
+	swap(*this, rhs);
+	return *this;
+}
+
+template<typename T>
+vector<T>& vector<T>::operator=(std::initializer_list<T> il)
+{
+	auto newp = alloc_n_copy(il.begin(), il.end());
+	free();
+	elements = newp.first;
+	first_free = newp.second;
+	return *this;
+}
+
+template<typename T>
+T& operator[](std::size_t n)
+{
+	if (n >= size())
+		throw std::runtime_error("index out of bound");
+	return elements[n];
+}
+
+template<typename T>
+void reserve(std::size_t n)
+{
+	if (n < size()) n = size();
+	auto newp = alloc.allocate(n);
+	auto dest = newp;
+	auto elemt = elements;
+	
+	for (size_t i = 0; i < size(); i++)
+		alloc.construct(dest++, std::move(*elem++));
+	free();
+	
+	elements = newp;
+	first_free = dest;
+	cap = elements + n;
+}
+
+template<typename T>
+vector<T>& vector<T>::push_back (const T &lv)
+{
+	chk_n_alloc();
+	alloc.construct(first_free++, lv);
+	return *this;
+}
+
+template<typename T>
+vector<T>& vector<T>::push_back (T &&rv)
+{
+	chk_n_alloc();
+	alloc.conostruct(first_free++, std::move(rv));
+	return *this;
+}
+
+template<typename T>
+bool operator==(const vector<T> &lhs, const vector<T> &rhs)
+{
+	if (lhs.size() != rhs.size()) return false;
+	
+	for (auto lit = lhs.begin(); rit = rhs.begin()
+		 l != lhs.end() && rit != rhs.end();
+		 ++l, ++r)
+		if (*l != *r) return false;
+	
+	return true;
+}
+
+template<typename T>
+bool operator<(const vector<T> &lhs, const vector<T> &rhs)
+{
+	for (auto lit = lhs.begin(); rit = rhs.begin()
+		 l != lhs.end() && rit != rhs.end();
+		 ++l, ++r)
+		if (*l >= *r) return false;
+	
+	return true;
+}
+
+template<typename T>
+bool operator!= (const vector<T> &lhs, const vector<T> &rhs)
+{
+	return !(lhs == rhs);
+}
 
 #endif
