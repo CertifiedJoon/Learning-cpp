@@ -148,13 +148,28 @@ const T LinkedList<T>::back(){
 		exit(EXIT_FAILURE);
 	}
 	
-	ListElements<T> *curr = head_;
+	ListElement<T> *curr = head_;
 	
 	while(current->get_next()) current = current->get_next();
 	
 	return current->get_data();
 }
 
+template <class T>
+void LinkedList<T>::insert(int index, T value){
+	auto *node = new ListElement<T>(value);
+	
+	ListElement<T> *slow = nullptr;
+	ListElement<T> *fast = head_;
+	
+	int i = 0;
+	while(fast && i < index) {
+		slow = fast;
+		fast = fast->get_next();
+	}
+	
+	
+}
 
 
 
