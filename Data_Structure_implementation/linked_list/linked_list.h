@@ -25,11 +25,11 @@ public:
 	const T pop_back(); //
 	const T front();  //
 	const T back(); //
-	void insert(int index, T value);
-	void erase (int index);
-	const T value_from_end(int n);
-	void reverse();
-	void remove_value(T value);
+	void insert(int index, T value); //
+	void erase (int index); //
+	const T value_from_end(int n); //
+	void reverse(); //
+	void remove_value(T value); //
 private:
 	List_elements<T> *head_;
 };

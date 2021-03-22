@@ -1,6 +1,9 @@
 #include "linked_list.h"
 #include <exception>
 #include <iostream>
+
+namespace cj {
+	
 template <class T>
 LinknedList<T>::~LinkedList() {
 	ListElement<T> *current = head_;
@@ -106,8 +109,8 @@ T LinkedList<T>::pop_back() {
 		exit(EXIT_FAILURE);
 	}
 	
-	ListElements<T> *slow = nullptr;
-	ListElemetns<T> *fast = head_;
+	ListElement<T> *slow = nullptr;
+	ListElement<T> *fast = head_;
 	
 	while(fast->get_next()){
 		slow = fast;
@@ -157,19 +160,120 @@ const T LinkedList<T>::back(){
 
 template <class T>
 void LinkedList<T>::insert(int index, T value){
-	auto *node = new ListElement<T>(value);
 	
 	ListElement<T> *slow = nullptr;
 	ListElement<T> *fast = head_;
 	
-	int i = 0;
-	while(fast && i < index) {
+	int i;
+	for (i = 0; i < index && fast; ++i){
 		slow = fast;
 		fast = fast->get_next();
 	}
 	
+	if (i != index) {
+		std::cerr << "Index out of bounds." << std::endl;
+		exit(EXIT_FAILURE);
+	}
 	
+	auto *node = new ListElement<T>(value);
+	
+	if (prev == nullptr) {
+		node->set_next(head_);
+		head_ = node;
+	} else {
+		slow->set_next(node);
+		node->set_next(fast);
+	}	
 }
+
+template <class T>
+void LinkedList<T>::erase(int index) {
+	ListElement<T> *slow = nullptr;
+	ListElement<T> *fast = head_;
+	
+	int i;
+	for (i = 0; i < index && fast; ++i){
+		slow = fast;
+		fast = fast->get_next();
+	}
+	
+	if (i != index) {
+		std::cerr << "Index out of bounds." << std::endl;
+		exit(EXIT_FAILURE);
+	} 
+	
+	if (slow == nullptr) {
+		head_ = fast->get_next();
+	} else {
+		slow->set_next(fast->get_next());
+	}
+	
+	delete fast;
+}
+
+
+template <class T>
+const T LinkedList<T>::value_from_end(int n) {
+	ListElement<T> *slow = nullptr;
+	ListElement<T> *fast = head_;
+	
+	int i ;
+	for (i = 0; i < n && fast; ++i)
+		fast = fast->get_next();
+	
+	if (i < n){
+		std::cerr << "index out of range" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	while(fast){
+		slow = slow->get_next();
+		fast = fast->get_next();
+	}
+	
+	return slow->get_data();
+}
+
+template <class T>
+void LinkedList<T>::reverse() {
+	ListElement<T> *curr = head_, next = nullptr, prev = nullptr;
+	
+	while(curr) {
+		next = curr->get_next();
+		curr->set_next(prev);
+		prev = curr;
+		curr = next;
+	}
+	
+	head_ = prev;
+}
+
+
+template <class T>
+void LinkedList<T>::remove_value(T value) {
+	ListElement<T> *slow = nullptr;
+	ListElement<T> *fast = head_;
+	
+	while (fast) {
+		if (fast->get_data() == value) {
+			if (slow == nullptr){
+				head_ = fast->get_next();
+			} else {
+				slow->set_next(fast->get_next());
+			}
+			
+			delete fast;
+			fast = slow->get_next();
+			break;
+		}
+		
+		slow = fast;
+		fast = fast->get_next();
+	}
+}
+
+} //namespace cj
+
 
 
 
