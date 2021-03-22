@@ -5,7 +5,7 @@
 namespace cj {
 	
 template <class T>
-LinknedList<T>::~LinkedList() {
+LinkedList<T>::~LinkedList() {
 	ListElement<T> *current = head_;
 	ListElement<T> *next = nullptr;
 	
@@ -25,6 +25,8 @@ int LinkedList<T>::size() const {
 		current = current->get_next();
 		size++;
 	}
+	
+	return size;
 }
 
 template <class T>
@@ -33,8 +35,6 @@ void LinkedList<T>::push_front(T value) {
 	
 	new_head->set_next(head_);
 	head_ = new_head;
-	
-	return *this;
 }
 	
 template <class T>
@@ -74,7 +74,7 @@ const T LinkedList<T>::pop_front() {
 	
 	
 	T ret = head_->get_data();
-	ListElement<T>* temp = head_n;
+	ListElement<T>* temp = head_;
 	head_ = head_->get_next();
 	
 	delete temp;
@@ -101,7 +101,7 @@ void LinkedList<T>::push_back(T value) {
 }
 
 template <class T>
-T LinkedList<T>::pop_back() {
+const T LinkedList<T>::pop_back() {
 	try {
 		if (head_ == nullptr) throw std::runtime_error("Cannot pop_back from empty list");
 	} catch (std::runtime_error &e) {
@@ -151,7 +151,7 @@ const T LinkedList<T>::back(){
 		exit(EXIT_FAILURE);
 	}
 	
-	ListElement<T> *curr = head_;
+	ListElement<T> *current = head_;
 	
 	while(current->get_next()) current = current->get_next();
 	
@@ -177,7 +177,7 @@ void LinkedList<T>::insert(int index, T value){
 	
 	auto *node = new ListElement<T>(value);
 	
-	if (prev == nullptr) {
+	if (slow == nullptr) {
 		node->set_next(head_);
 		head_ = node;
 	} else {
@@ -236,7 +236,7 @@ const T LinkedList<T>::value_from_end(int n) {
 
 template <class T>
 void LinkedList<T>::reverse() {
-	ListElement<T> *curr = head_, next = nullptr, prev = nullptr;
+	ListElement<T> *curr = head_, *next = nullptr, *prev = nullptr;
 	
 	while(curr) {
 		next = curr->get_next();
@@ -270,6 +270,16 @@ void LinkedList<T>::remove_value(T value) {
 		slow = fast;
 		fast = fast->get_next();
 	}
+}
+	
+template<class T>
+void LinkedList<T>::print_debug() const {
+	ListElement<T> * curr = head_;
+	while(curr){
+		std::cout << curr->get_data() << " ";
+		curr = curr->get_next();
+	}
+	std::cout << std::endl;
 }
 
 } //namespace cj

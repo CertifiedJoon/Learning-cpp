@@ -31,7 +31,7 @@ public:
 	void reverse(); //
 	void remove_value(T value); //
 private:
-	List_elements<T> *head_;
+	ListElement<T> *head_;
 };
 	
 } // namespace cj
