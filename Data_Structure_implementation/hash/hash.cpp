@@ -1,10 +1,10 @@
-#include "hash_table.h"
+#include "hash.h"
 
 namespace cj {
 
-HashTable::HashTable(const int size) {
+Hash::Hash(const int size) {
 	size_ = size;
-	data = new HashObject[size];
+	data_ = new HashObject[size];
 	assert(data_ != nullptr);
 	
 	for (int i = 0; i < size; ++i) {
@@ -12,9 +12,9 @@ HashTable::HashTable(const int size) {
 	}
 }
 	
-HashTable::~HashTable() { delete[] data_; }
+Hash::~Hash() { delete[] data_; }
 	
-int HashTable::Hash(const std::string & key) {
+int Hash::CalcHash(const std::string & key) {
 	int hash = 0;
 	
 	int key_length = static_cast<int>(key.length());
@@ -25,8 +25,8 @@ int HashTable::Hash(const std::string & key) {
 	return abs(hash % size_);
 }
 	
-bool HashTable::Exists(const std::string &key) {
-	int index = Hash(key);
+bool Hash::Exists(const std::string &key) {
+	int index = CalcHash(key);
 	int original_index = index;
 	bool found = false;
 	
@@ -46,8 +46,8 @@ bool HashTable::Exists(const std::string &key) {
 	return found;
 }
 	
-void HashTable::Add(HashObject *elem) {
-	int index = Hash(elem->GetKey());
+void Hash::Add(HashObject *elem) {
+	int index = CalcHash(elem->GetKey());
 	int original_index = index;
 	int dummy_index = -1;
 	
@@ -71,7 +71,7 @@ void HashTable::Add(HashObject *elem) {
 }
 
 	
-void HashTable::PrintDebug() {
+void Hash::PrintDebug() {
 	for (int i = 0; i < size_; ++i) {
 		std::cout << i << ": " << data_[i].GetKey() <<": " << data_[i].GetValue() << std::endl;
 	}
@@ -79,8 +79,8 @@ void HashTable::PrintDebug() {
 	std::cout << "=============================" << std::endl;
 }
 	
-void HashTable::Remove(const std::string &key) {
-	int index = Hash(key);
+void Hash::Remove(const std::string &key) {
+	int index = CalcHash(key);
 	int original_index = index;
 	
 	while (data_[index].GetKey() != HashObject::GetNullKey()) {
@@ -98,19 +98,19 @@ void HashTable::Remove(const std::string &key) {
 	}
 }
 
-const std::string &HashTable::Get(const std::string &key) {
-	int index = Hash(key);
+const std::string Hash::Get(const std::string &key) {
+	int index = CalcHash(key);
 	int original_index = index;
 	
 	while(data_[index].GetKey() != HashObject::GetNullKey()) {
 		if (data_[index].GetKey() == key) {
 			return data_[index].GetValue();
 		}
-		index = (index + 1) % size;
+		index = (index + 1) % size_;
 		if (index == original_index)
 			break;
 	}
 	
-	return NULL;
+	return "";
 }
 }

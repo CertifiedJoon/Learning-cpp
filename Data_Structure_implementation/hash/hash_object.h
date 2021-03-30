@@ -1,3 +1,5 @@
+#include <string>
+
 #ifndef HASH_OBJECT_H
 #define HASH_OBJECT_H
 
@@ -8,10 +10,10 @@ public:
 	HashObject() {}
 	~HashObject() {}
 	HashObject(const HashObject &) = delete;
-	HashObject &opeartor=(const HashObject &) = default;
+	HashObject &operator=(const HashObject &) = default;
 	
-	std::string &GetKey() const { return key_; }
-	std::string &GetValue() const {return value_; }
+	std::string GetKey() const { return key_; }
+	std::string GetValue() const {return value_; }
 	void SetAsDummy() {
 		key_ = GetDummyKey();
 		value_ = "";
@@ -23,8 +25,8 @@ public:
 	
 private:
 	std::string key_;
-	std::string value;
-}
+	std::string value_;
+};
 
 }
 
