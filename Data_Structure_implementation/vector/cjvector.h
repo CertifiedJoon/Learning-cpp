@@ -1,9 +1,10 @@
 #ifndef VECTOR_H
-#definde VECTOR_H
+#define VECTOR_H
 
 #include <memory>
 #include <utility>
 #include <exception>
+#include <initializer_list>
 
 template<typename> class vector;
 template <typename T> bool operator==(const vector<T>&, const vector<T>&);
@@ -19,8 +20,8 @@ public:
 	vector() : elements(nullptr), first_free(nullptr), cap (nullptr) {}
 	vector(const vector<T> &v) ;
 	vector(vector<T> &&v) : elements(v.elements), first_free(v.first_free), cap(v.cap) 
-		{v.elements = v.first_free = v.cap = nullptr}
-	vector(std::intializer_list<T> il);
+		{v.elements = v.first_free = v.cap = nullptr;}
+	vector(std::initializer_list<T> il);
 	~vector() {free();}
 	
 	vector<T>& operator= (vector<T> rhs);
@@ -30,7 +31,7 @@ public:
 	std::size_t size() const { return first_free - elements; }
 	std::size_t capacity() const { return cap - elements; }
 	T* begin() const { return elements; }
-	T* end() cosnt { return first_free; }
+	T* end() const { return first_free; }
 	
 	void reserve(std::size_t);
 	vector<T>& push_back(const T &lv);
@@ -55,7 +56,7 @@ template<typename T>
 std::pair<T*, T*> alloc_n_copy (const T *b, const T *e)
 {
 	auto data = alloc.allocate(e - b);
-	return {data, std::uninitialized_copy(b, e, data)}
+	return {data, std::uninitialized_copy(b, e, data)};
 }
 
 template<typename T>
@@ -74,7 +75,7 @@ void vector<T>::reallocate()
 {
 	size_t new_cap = size() ? 2*size() : 16;
 	auto first = alloc.allocate(new_cap);
-	auto last = std::unitialized_copy(std::make_move_iterator(begin()),
+	auto last = std::uninitialized_copy(std::make_move_iterator(begin()),
 									  std::make_move_iterator(end()),
 									 first);
 	free();
@@ -88,8 +89,8 @@ vector<T>::vector(const vector<T> &v)
 {
 	auto newp = alloc_n_copy(v.begin(), v,end());
 	free();
-	first = newp.first;
-	first = cap = newp.second;
+	first_free = newp.first;
+	first_free = cap = newp.second;
 }
 
 template<typename T>
@@ -103,14 +104,14 @@ vector<T>::vector(std::initializer_list<T> il)
 template<typename T>
 void swap(vector<T> &lhs, vector<T> &rhs)
 {
-	using std::swap();
+	using std::swap;
 	swap(lhs.elements, rhs.elements);
 	swap(lhs.first_free, rhs.first_free);
 	swap(lhs.cap, rhs.cap);
 }
 
 template<typename T>
-vector<T>::operator=(vector<T> rhs)
+vector<T>& vector<T>::operator=(vector<T> rhs)
 {
 	swap(*this, rhs);
 	return *this;
@@ -127,7 +128,7 @@ vector<T>& vector<T>::operator=(std::initializer_list<T> il)
 }
 
 template<typename T>
-T& operator[](std::size_t n)
+T& vector<T>::operator[](std::size_t n)
 {
 	if (n >= size())
 		throw std::runtime_error("index out of bound");
@@ -135,12 +136,12 @@ T& operator[](std::size_t n)
 }
 
 template<typename T>
-void reserve(std::size_t n)
+void vector<T>::reserve(std::size_t n)
 {
 	if (n < size()) n = size();
 	auto newp = alloc.allocate(n);
 	auto dest = newp;
-	auto elemt = elements;
+	auto elem = elements;
 	
 	for (size_t i = 0; i < size(); i++)
 		alloc.construct(dest++, std::move(*elem++));
@@ -172,10 +173,10 @@ bool operator==(const vector<T> &lhs, const vector<T> &rhs)
 {
 	if (lhs.size() != rhs.size()) return false;
 	
-	for (auto lit = lhs.begin(); rit = rhs.begin()
-		 l != lhs.end() && rit != rhs.end();
-		 ++l, ++r)
-		if (*l != *r) return false;
+	for (auto lit = lhs.begin(), rit = rhs.begin();
+		 lit != lhs.end() && rit != rhs.end();
+		 ++lit, ++rit)
+		if (*lit != *rit) return false;
 	
 	return true;
 }
@@ -183,10 +184,10 @@ bool operator==(const vector<T> &lhs, const vector<T> &rhs)
 template<typename T>
 bool operator<(const vector<T> &lhs, const vector<T> &rhs)
 {
-	for (auto lit = lhs.begin(); rit = rhs.begin()
-		 l != lhs.end() && rit != rhs.end();
-		 ++l, ++r)
-		if (*l >= *r) return false;
+	for (auto lit = lhs.begin(), rit = rhs.begin();
+		 lit != lhs.end() && rit != rhs.end();
+		 ++lit, ++rit)
+		if (*lit >= *rit) return false;
 	
 	return true;
 }
