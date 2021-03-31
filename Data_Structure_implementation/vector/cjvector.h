@@ -53,7 +53,7 @@ template<typename T>
 std::allocator<T> vector<T>::alloc;
 
 template<typename T>
-std::pair<T*, T*> alloc_n_copy (const T *b, const T *e)
+std::pair<T*, T*> vector<T>::alloc_n_copy (const T *b, const T *e)
 {
 	auto data = alloc.allocate(e - b);
 	return {data, std::uninitialized_copy(b, e, data)};
