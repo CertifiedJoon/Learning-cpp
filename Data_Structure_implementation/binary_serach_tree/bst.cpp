@@ -106,4 +106,111 @@ void PrintBFS(BinaryNode* node) {
 	}
 }
 
+void PrintInorder(BinaryNode* node) {
+	BinaryNode* root = node;
+	
+	while(root) {
+		if (root->left) {
+			BinaryNode* prev = root->left;
+			
+			while(prev->right && prev->right != root)
+				prev = prev->right;
+			
+			if (!prev->right){
+				prev->right = root;
+				root = root->left;
+			} else if (prev->right == root) {
+				std::cout << root->data << " ";
+				prev->right = nullptr;
+				root = root -> right;
+			}
+		} else {
+			std::cout << root->data << " ";
+			root = root->right;
+		}
+	}
+	
+	std::cout << std::endl;
+}
+
+Bool isBST(BinaryNode *node) {
+	if (!node) return true;
+	
+	if (node->left && node->data < node->left->data) return false;
+	if (node->right && node->data > node->right->data) return false;
+	
+	return isBST(node->left) && isBST(node->right);
+}
+
+BinaryNode* DeleteValue(BinaryNode* node, int value) {
+	if (node == nullptr) return nullptr;
+	
+	if (value < node->data)
+		node->left = DeleteValue(node->left, value);
+	else if (value > node->data)
+		node->right = DeleteValue(node->right, value);
+	else {
+		if (node->left == nullptr && node->right == nullptr) {
+			delete node;
+			node = nullptr;
+		} else if (node->left == nullptr) {
+			BinaryNode* temp = node;
+			node = node->right;
+			delete temp;
+		} else if (node->right = nullptr) {
+			BinaryNode* temp = node;
+			node = node->left;
+			delete temp;
+		} else {
+			BinaryNode* temp = GetMinNode(node->right);
+			node->data = temp->data;
+			node->right = DeleteValue(node->right, temp->data;)
+		}
+	}
+	return node;
+}
+
+BinaryNode* GetSuccessor(BinaryNode* node, int value) {
+	if (node == nullptr) return node;
+	
+	BinaryNode* target_node = node;
+	while (target_node->data != value) {
+		if (value < target_node->data) {
+			target_node = target_node->left;
+		} else if (value > target_node->data) {
+			target_node = target_node->right;
+		}
+	}
+	
+	if (target_node->right != nullptr) {
+		return GetMinNode(target_node->right);
+	} else {
+		BinaryNode* successor = nullptr;
+		BinaryNode* ancestor = node;
+		
+		while (ancestor != nullptr) {
+			if (value < ancestor->data) {
+				successor = ancestor;
+				ancestor = ancestor->left;
+			} else {
+				ancestor = ancestor->right;
+			}
+		}
+	}
+	
+	return successor;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 

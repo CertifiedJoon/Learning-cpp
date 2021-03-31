@@ -39,9 +39,6 @@ void PrintInorder(BinaryNode* node);
 //Retuns true if tree is a binary search tree;
 bool IsBST(BinaryNode* node);
 
-//Returns true if all items in the given tree are between the given values
-bool IsBetween(BinaryNode* node, int lo, int hi);
-
 //Delete a specific node from the tree
 BinaryNode* DeleteValue(BinaryNode* node, int value);
 
