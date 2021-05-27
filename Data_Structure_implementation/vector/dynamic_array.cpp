@@ -37,7 +37,6 @@ public:
 	vector<T>& push_back(T &&v);
 	
 private:
-	
 	static std::allocator<T> alloc;
 	std::pair<T*, T*> allocNCopy (const T*, const T*);
 	void free();
@@ -70,7 +69,7 @@ void vector<T>::free() {
 
 template<typename T>
 void vector<T>::reallocate() {
-	size_t new_cap = size() ? 2*size() : 16;
+	std::size_t new_cap = size() ? 2*size() : 16;
 	auto first = alloc.allocate(new_cap);
 	auto last  = std::unitialized_copy(std::make_move_iterator(begin()), std::make_move_iterator(end()), first);
 	
@@ -122,7 +121,66 @@ vector<T>& operator=(std::initializer_list<T> li) {
 }
 
 template<typename T>
+T& vector<T>::operator[] (std::size_t n) {
+	if (n >= size())
+		throw std::runtime_error("index out of bound");
+	return elements[n];
+}
 
+template<typename T>
+void vector<T>::reserve(std::size_t n) {
+	if (n < size()) n = size();
+	
+	auto first = alloc.allocate(n);
+	auto last = std::unitialized_copy(std::make_move_iterator(begin()),
+									 std::make_move_iteartor(end()),
+									 first);
+	free();
+	elements = first;
+	first_free = elements;
+	cap = first + n;
+}
 
+template<typename T>
+vector<T>& vector<T>::push_back(const T &lv) {
+	chk_n_alloc();
+	alloc.construct(first_free++, lv);  //gotta revise the implementation of construct
+	return *this;
+}
+
+template<typename T>
+vector<T> vector<T>::push_back(T &&rv) {
+	chk_n_alloc();
+	alloc.construct(first_free++, std::move(rv));   //gotta revise std::move
+	return *this;
+}
+
+template<typename T>
+bool operator<(const vector<T> &lhs, const vector<T> &rhs)
+{
+	for (auto lit = lhs.begin(), rit = rhs.begin(); lit < lhs.end() && rit < rhs.end(); ++lit, ++rit) {
+		if (*lit < *rit)
+			return true;
+		else if (*lit > *rit)
+			return false;
+	}
+	return false;
+}
+
+template<typename T>
+bool operator==(const vector<T> &lhs, const vector<T> &rhs)
+{
+	for (auto lit = lhs.begin(), rit = rhs.begin(); lit < lhs.end() && rit < rhs.end(); ++lit, ++rit) {
+		if (*lit != *rit)
+			return false;
+	}
+	return true;
+}
+
+template<typename T>
+bool operator !=(const vector<T> &lhs, const vector<T> &rhs)
+{
+	return !(lhs == rhs);
+}
 
 #endif
