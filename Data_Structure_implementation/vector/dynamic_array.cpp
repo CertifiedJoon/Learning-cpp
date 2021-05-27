@@ -100,7 +100,7 @@ void swap(vector<T> &lhs, vector<T> &rhs)
 {
 	using std::swap;
 	swap(lhs.elements, rhs.elements);
-	swap(lhs.first_free, rhs.first_free);
+	swap(lhs.first_free, rhs.first_free);   // --> std::swap() uses one move construction and two move assignment. does not copy to swap!!!
 	swap(lhs.cap, rhs.cap);
 }
 
@@ -144,14 +144,14 @@ void vector<T>::reserve(std::size_t n) {
 template<typename T>
 vector<T>& vector<T>::push_back(const T &lv) {
 	chk_n_alloc();
-	alloc.construct(first_free++, lv);  //gotta revise the implementation of construct
+	alloc.construct(first_free++, lv);  //gotta revise the implementation of construct --> take a pointer use new to construct a pointer with lv.
 	return *this;
 }
 
 template<typename T>
 vector<T> vector<T>::push_back(T &&rv) {
 	chk_n_alloc();
-	alloc.construct(first_free++, std::move(rv));   //gotta revise std::move
+	alloc.construct(first_free++, std::move(rv));   //gotta revise std::move --> changes l-value to x-value (tells the compiler the original value can be plunged, so compiler can mvoe it)
 	return *this;
 }
 
