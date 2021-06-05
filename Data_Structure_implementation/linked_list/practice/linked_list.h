@@ -20,10 +20,10 @@ public:
 	void print();
 	
 // 	mutator
-	llst<T>& push_back(node<T>* n);
-	llst<T>& push_back(T val);
-	llst<T>& push_front(node<T> *n);
-	llst<T>& push_front(T val);
+	llst<T>& push_back(const node<T>* n);
+	llst<T>& push_back(const T& val);
+	llst<T>& push_front(const node<T> *n);
+	llst<T>& push_front(const T& val);
 	
 	node<T> pop_back();
 	node<T> pop_front();
@@ -36,7 +36,7 @@ public:
 	node<T>* erase_after(node<T> *after, node<T> *to_insert);
 	node<T>* erase_before(node<T> *before, node<T> *to_insert);
 	
-	node<T>* T nth_last_node(int n);
+	node<T>* nth_last_node(int n);
 	void reverse();
 	void remove_value(T value);
 
