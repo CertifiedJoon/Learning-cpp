@@ -52,3 +52,7 @@ void llst<T>::print() {
 	}
 }
 
+
+template<class T>
+void llst<T>::
+
