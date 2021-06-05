@@ -15,6 +15,9 @@ public:
 	size_t size();
 	const T val_at(size_t index);
 	bool empty() { return (head == nullptr) ? true : false; }
+	
+//  tester
+	void print();
 private:
 	node<T> *head;
 }
