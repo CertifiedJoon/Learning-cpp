@@ -17,4 +17,29 @@ class IndexOutOfBounds : public RuntimeException {
     IndexOutOfBounds(const string& err): RuntimeException(err) {};
 };
 
+class QueueEmpty : public RuntimeException {
+  public:
+    QueueEmpty(const string &err) : RuntimeException(err) {}
+};
+
+class QueueFull : public RuntimeException {
+  public:
+    QueueFull(const string &err) : RuntimeException(err) {}
+};
+
+class StackEmpty : public RuntimeException {
+  public:
+    StackEmpty(const string& err) : RuntimeException(err) {}
+};
+
+class StackFull : public RuntimeException {
+  public:
+    StackFull(const string& err) : RuntimeException(err) {}
+};
+
+class DequeEmpty : public RuntimeException {
+  public:
+    DequeEmpty(const string& err) : RuntimeException(err) {}
+};
+
 #endif
